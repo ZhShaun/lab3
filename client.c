@@ -21,6 +21,7 @@ int main (int argc , char **argv) {
   struct sockaddr_in svr_addr;  // address of server, used by `connect()`
 
   int read_bytes;               // number of bytes, return by `read()`
+  int write_bytes;
   char buf[MAX_SIZE];           // buffer to store msg
 
   /* 1) Create the socket, use `socket()`
@@ -53,6 +54,33 @@ int main (int argc , char **argv) {
   }
   buf[read_bytes] = '\0';
   printf("Server datetimes: %s\n", buf);
+
+  while (1) {
+    printf("Enter your message...(enter e to exit)\n");
+    scanf(" %s", buf);
+
+    if (buf[0] == e) {
+      break;
+    }
+
+    printf("Your message: %s\n", buf); // for debug
+
+    write_bytes = write(cli_fd, buf, strlen(buf));
+    if(write_bytes < 0) {
+      perror("Write Failed");
+      exit(1);
+    }
+
+    read_bytes = read(cli_fd, buf, sizeof(buf));
+    if (read_bytes < 0) {
+      perror("Read failed");
+      exit(1);
+    }
+    buf[read_bytes] = '\0';
+    print("Message from server: %s\n", buf);
+  }
+
+
   close(cli_fd);
 
   return 0;
