@@ -29,6 +29,7 @@ int main() {
   socklen_t addr_len;           // size of address, used by `accept()`
 
   time_t ticks;                 // store current time
+  int read_bytes;
   int write_bytes;              // number of byte, return by `write()`
   char buf[MAX_SIZE];           // buffer to store msg
 
@@ -88,19 +89,28 @@ int main() {
       perror("Write Failed");
       exit(1);
     }
-
+     
+    memset(buf, '\0', strlen(buf));
     // multiple messages
-    while ((read_bytes = read(cli_fd, buf, sizeof(buf))) >= 0) {
+    while (1) {
+
+      read_bytes = read(cli_fd, buf, sizeof(buf));
       if (read_bytes < 0) {
         perror("Read failed");
         exit(1);
       }
+      
+      if (buf[0] == 'e' && read_bytes == 1) 
+	break;
+      // printf("read_bytes:%d\n", read_bytes); // for debug
+      printf("Message from client:: %s\n", buf); 
 
       write_bytes = write(cli_fd, buf, strlen(buf));
       if(write_bytes < 0) {
         perror("Write Failed");
         exit(1);
       }
+      memset(buf, '\0', strlen(buf));
     }
     
     

@@ -59,17 +59,18 @@ int main (int argc , char **argv) {
     printf("Enter your message...(enter e to exit)\n");
     scanf(" %s", buf);
 
-    if (buf[0] == e) {
-      break;
-    }
-
-    printf("Your message: %s\n", buf); // for debug
+    //printf("Your message: %s\n", buf); // for debug
 
     write_bytes = write(cli_fd, buf, strlen(buf));
     if(write_bytes < 0) {
       perror("Write Failed");
       exit(1);
     }
+    
+    if (buf[0] == 'e' && strlen(buf) == 1) {
+      break;
+    }
+
 
     read_bytes = read(cli_fd, buf, sizeof(buf));
     if (read_bytes < 0) {
@@ -77,7 +78,7 @@ int main (int argc , char **argv) {
       exit(1);
     }
     buf[read_bytes] = '\0';
-    print("Message from server: %s\n", buf);
+    printf("Message from server: %s\n", buf);
   }
 
 
