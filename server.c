@@ -89,6 +89,21 @@ int main() {
       exit(1);
     }
 
+    // multiple messages
+    while ((read_bytes = read(cli_fd, buf, sizeof(buf))) >= 0) {
+      if (read_bytes < 0) {
+        perror("Read failed");
+        exit(1);
+      }
+
+      write_bytes = write(cli_fd, buf, strlen(buf));
+      if(write_bytes < 0) {
+        perror("Write Failed");
+        exit(1);
+      }
+    }
+    
+    
     close(cli_fd);
   }
 
